@@ -1,17 +1,25 @@
 <?php
 require_once __DIR__ . '/../config.php';
-session_start();
+// config.php may already start the session; guard to avoid notices
+if (session_status() == PHP_SESSION_NONE) session_start();
 header('Content-Type: application/json');
 if (empty($_SESSION['user_id'])) {
     http_response_code(401); echo json_encode(['error'=>'unauth']); exit;
 }
 
-// only admin/hrd can access full list
-if (!in_array($_SESSION['role'] ?? '', ['admin','hrd'])) {
+// admin/hrd and suppliers can access list (suppliers need it to claim orders)
+if (!in_array($_SESSION['role'] ?? '', ['admin','hrd','supplier'])) {
     http_response_code(403); echo json_encode(['error'=>'forbidden']); exit;
 }
 
 $res = $conn->query('SELECT * FROM suppliers ORDER BY created_at DESC');
+if ($res === false) {
+    http_response_code(500);
+    echo json_encode(['error'=>'db','msg'=>$conn->error ?? 'query_failed']);
+    exit;
+}
+
 $out = [];
 while ($r = $res->fetch_assoc()) $out[] = $r;
 echo json_encode($out);
+exit;

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/csrf.php';
-session_start();
+if (session_status() == PHP_SESSION_NONE) session_start();
 header('Content-Type: application/json');
 if (empty($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin','hrd'])) { http_response_code(403); echo json_encode(['error'=>'forbidden']); exit; }
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo json_encode(['error'=>'method']); exit; }
@@ -15,3 +15,28 @@ $stmt = $conn->prepare('INSERT INTO suppliers (name,contact) VALUES (?,?)');
 $stmt->bind_param('ss',$name,$contact);
 if ($stmt->execute()) echo json_encode(['ok'=>true,'id'=>$stmt->insert_id]);
 else { http_response_code(500); echo json_encode(['error'=>'db']); }
+// notify admin/hrd about new supplier
+$newId = $stmt->insert_id;
+$conn->query("CREATE TABLE IF NOT EXISTS notifications (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	order_id INT,
+	message VARCHAR(255),
+	created_by INT,
+	target_user INT DEFAULT NULL,
+	is_read TINYINT(1) DEFAULT 0,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
+$col = $conn->query("SHOW COLUMNS FROM notifications LIKE 'target_user'");
+if (!$col || $col->num_rows === 0) {
+	$conn->query("ALTER TABLE notifications ADD COLUMN target_user INT DEFAULT NULL");
+}
+$admins = $conn->query("SELECT id,name FROM users WHERE role IN ('admin','hrd')");
+$msg = $conn->real_escape_string("Supplier baru ditambahkan: $name");
+if ($admins) {
+	while ($a = $admins->fetch_assoc()) {
+		$t = (int)$a['id'];
+		$conn->query("INSERT INTO notifications (order_id,message,created_by,target_user,is_read) VALUES (NULL,'$msg',{$_SESSION['user_id']},$t,0)");
+	}
+} else {
+	$conn->query("INSERT INTO notifications (order_id,message,created_by,target_user,is_read) VALUES (NULL,'$msg',{$_SESSION['user_id']},NULL,0)");
+}

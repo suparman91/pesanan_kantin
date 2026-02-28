@@ -1,0 +1,39 @@
+:root{
+  --bg:#f8f9fa;
+  --card:#ffffff;
+  --primary:#0d6efd;
+  --accent:#0dcaf0;
+  --text:#212529;
+  --muted:#6c757d;
+}
+
+[data-theme="dark"]{
+  /* dark theme removed — keep defaults only to avoid unreadable black theme */
+}
+
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--text);
+  transition:background .25s ease,color .25s ease;
+}
+
+.card, .table, .modal-content, .dropdown-menu{
+  background:var(--card) !important;
+  color:var(--text) !important;
+  transition:background .25s ease,color .25s ease,box-shadow .25s ease;
+}
+
+a{color:var(--primary)}
+
+.btn-primary{background:var(--primary);border-color:var(--primary)}
+
+.theme-transition *{transition:background .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease}
+
+.fade-in{animation:pkFadeIn .25s ease both}
+@keyframes pkFadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* subtle focus ring for accessibility */
+*:focus{outline:2px solid rgba(13,110,253,0.12);outline-offset:2px}
+
+/* theme toggle removed */

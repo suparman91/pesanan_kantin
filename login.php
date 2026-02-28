@@ -44,7 +44,7 @@ if (file_exists($logo_path)) $site_logo = 'uploads/site_logo.png';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Login - Pesanan Kantin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -75,7 +75,7 @@ if (file_exists($logo_path)) $site_logo = 'uploads/site_logo.png';
                                 <?php if (!empty($error)): ?>
                                     <script>$(function(){ Swal.fire({icon:'error',title:'Gagal',text:<?= json_encode($error) ?>}); });</script>
                                 <?php endif; ?>
-                                <form method="post" action="login.php" id="loginForm">
+                                <form method="post" action="#" id="loginForm">
                                     <?= csrf_input() ?>
                                     <div class="mb-3">
                                         <label class="form-label">Email</label>
@@ -86,9 +86,31 @@ if (file_exists($logo_path)) $site_logo = 'uploads/site_logo.png';
                                         <input type="password" name="password" class="form-control" required>
                                     </div>
                                     <div class="d-grid">
-                                        <button class="btn btn-primary">Login</button>
+                                        <button class="btn btn-primary" id="loginBtn">Login</button>
                                     </div>
                                 </form>
+                                <script>
+                                    $(function(){
+                                        $('#loginForm').on('submit', function(e){
+                                            e.preventDefault();
+                                            var $btn = $('#loginBtn');
+                                            $btn.prop('disabled', true).text('Memeriksa...');
+                                            $.post('api/auth.php', $(this).serialize()).done(function(res){
+                                                if (res.ok) {
+                                                    Swal.fire({icon:'success',title:'Berhasil',text:'Login sukses'}).then(function(){
+                                                        window.location.href = 'dashboard.php';
+                                                    });
+                                                } else {
+                                                    Swal.fire({icon:'error',title:'Gagal',text: res.message || 'Login gagal'});
+                                                }
+                                            }).fail(function(xhr){
+                                                var msg = 'Server error';
+                                                try { var j = JSON.parse(xhr.responseText); if (j && j.message) msg = j.message; } catch(e){}
+                                                Swal.fire({icon:'error',title:'Gagal',text: msg});
+                                            }).always(function(){ $btn.prop('disabled', false).text('Login'); });
+                                        });
+                                    });
+                                </script>
                                 <hr>
                                 <div class="text-center text-muted small">Hubungi HRD untuk pembuatan akun.</div>
                             </div>

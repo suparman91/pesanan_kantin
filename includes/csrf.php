@@ -1,6 +1,7 @@
 <?php
 // includes/csrf.php - simple CSRF utilities
-if (!isset($_SESSION)) session_start();
+// Ensure a session is started; use session_status() guard to avoid warnings
+if (session_status() == PHP_SESSION_NONE) session_start();
 
 if (!function_exists('csrf_token')) {
     function csrf_token() {

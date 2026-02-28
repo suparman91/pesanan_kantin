@@ -70,7 +70,7 @@ $users = null;
     <form method="post" class="modal-content" id="userAddForm">
       <?= csrf_input() ?>
       <input type="hidden" name="action" value="add">
-      <div class="modal-header"><h5 class="modal-title">Tambah Pengguna</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-header"><h5 class="modal-title">Tambah Pengguna</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
       <div class="modal-body">
         <div class="mb-3"><label>Nama</label><input name="name" class="form-control" required></div>
         <div class="mb-3"><label>Email</label><input name="email" type="email" class="form-control" required></div>
@@ -89,7 +89,7 @@ $users = null;
     <form method="post" enctype="multipart/form-data" class="modal-content">
       <?= csrf_input() ?>
       <input type="hidden" name="action" value="upload_logo">
-      <div class="modal-header"><h5 class="modal-title">Upload Site Logo</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-header"><h5 class="modal-title">Upload Site Logo</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
       <div class="modal-body">
         <div class="mb-3"><label>Pilih file (PNG/JPEG, max 2MB)</label><input type="file" name="site_logo" accept="image/*" class="form-control" required></div>
       </div>
@@ -102,7 +102,20 @@ $users = null;
 <script>
   $(document).ready(function(){
     var table3 = $('#tbl3').DataTable({
-      ajax: 'api/users.php',
+      ajax: {
+        url: 'api/users.php',
+        dataSrc: function(json){
+          if (!json) { showToastError('Server error','Invalid response'); return []; }
+          if (json.error) { showToastError('Error', json.error||json.msg||'API error'); return []; }
+          return Array.isArray(json) ? json : (json.data || json.users || json);
+        },
+        error: function(xhr, status){
+          var msg = status;
+          try { var j = JSON.parse(xhr.responseText || '{}'); if (j.error || j.msg) msg = (j.error || j.msg); } catch(e) {}
+          console.error('users API error', status, xhr.status, xhr.responseText);
+          showToastError('Server error',msg);
+        }
+      },
       columns: [
         { data: 'id' },
         { data: 'name' },

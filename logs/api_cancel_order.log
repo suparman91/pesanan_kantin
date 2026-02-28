@@ -1,0 +1,20 @@
+# api_cancel_order.log - created to capture DB errors from api/cancel_order.php
+2026-02-27T04:20:14+01:00 | request_keys=["_csrf","order_id"]
+2026-02-27T04:20:14+01:00 | user_id=5 | role=supplier | order_id=6 | msg=entered
+2026-02-27T04:20:14+01:00 | user_id=5 | role=supplier | order_id=6 | msg=already_accepted
+2026-02-27T04:21:50+01:00 | request_keys=["_csrf","order_id"]
+2026-02-27T04:21:50+01:00 | user_id=5 | role=supplier | order_id=6 | msg=entered
+2026-02-27T04:22:06+01:00 | request_keys=["_csrf","order_id"]
+2026-02-27T04:22:06+01:00 | user_id=5 | role=supplier | order_id=6 | msg=entered
+2026-02-27T05:21:11+01:00 | user_id=1 | role=admin | order_id=8 | msg=entered
+2026-02-27T05:21:17+01:00 | user_id=1 | role=admin | order_id=9 | msg=entered
+2026-02-27T09:28:23+01:00 | user_id=1 | role=admin | order_id=8 | msg=entered
+2026-02-27T09:28:41+01:00 | user_id=1 | role=admin | order_id=8 | msg=entered
+2026-02-27T09:28:45+01:00 | user_id=1 | role=admin | order_id=9 | msg=entered
+2026-02-27T09:29:14+01:00 | user_id=1 | role=admin | order_id=8 | msg=entered
+2026-02-27T09:29:17+01:00 | user_id=1 | role=admin | order_id=9 | msg=entered
+2026-02-27T09:29:23+01:00 | user_id=5 | role=supplier | order_id=8 | msg=entered
+2026-02-27T09:29:38+01:00 | user_id=5 | role=supplier | order_id=8 | msg=entered
+2026-02-27T09:29:57+01:00 | user_id=5 | role=supplier | order_id=9 | msg=entered
+2026-02-27T09:30:05+01:00 | user_id=1 | role=admin | order_id=9 | msg=entered
+2026-02-27T09:30:33+01:00 | user_id=5 | role=supplier | order_id=8 | msg=entered
